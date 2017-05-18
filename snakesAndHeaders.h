@@ -11,6 +11,9 @@
 #ifndef snakesAndHeaders_h
 #define snakesAndHeaders_h
 
+////////////////////// CLASSES ////////////////////////
+class player;
+
 /** The tiles form the basis of the entire game
  */
 class tile{
@@ -38,13 +41,16 @@ public:
         endTile->nextTile = nullptr;
         endTile->prevTile = startTile;
         
-        //For now the rest of the board will be assembled manually, in future I hope to add a function that will randomly generate the board
+        //For now the rest of the board will be assembled manually, in future I hope to add a function that will procedurally generate the board
         
         
     }
-    ~board();
+    virtual ~board(){
+        
+    }
     void printBoard();
     void push_back(std::string);
+    player start();
 private:
     tile* startTile;
     tile* endTile;
@@ -55,12 +61,43 @@ private:
 class player{
 public:
     player(tile* inputPosition): position(inputPosition){}
-    void operator++();
-    void operator--();
+    player& operator++();
+    player& operator--();
     std::string operator*();
     
 private:
     tile* position;
 };
+
+////////////////////////// FUNCTIONS //////////////////////////
+
+//// Board Functions ////
+/** Returns a player pointing to the starting tile */
+player board::start(){
+    player returnPlayer(startTile);
+    return returnPlayer;
+}
+
+//// Player Functions ////
+/** Moves the player to the next tile */
+player& player::operator++(){
+    if(position->nextTile != nullptr){
+        position = position->nextTile;
+    }
+    return *this;
+}
+
+/** Moves the player to the previous tile */
+player& player::operator--(){
+    if(position->prevTile != nullptr){
+        position = position->prevTile;
+    }
+    return *this;
+}
+
+/** Returns the icon of the tile the player is standing on */
+std::string player::operator*(){
+    return position->icon;
+}
 
 #endif /* snakesAndHeaders_h */
