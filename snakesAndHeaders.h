@@ -13,6 +13,7 @@
 
 ////////////////////// CLASSES ////////////////////////
 class player;
+class board;
 
 /** The tiles form the basis of the entire game
  */
@@ -32,10 +33,17 @@ private:
  */
 class board{
 public:
-    board(){
+    board(): startTile(nullptr), endTile(nullptr){
         //Create the start and end tiles
+        try{
         startTile = new tile(" ");
         endTile = new tile(" ");
+        }
+        catch(std::exception &e){
+            delete startTile;
+            delete endTile;
+            return;
+        }
         startTile->nextTile = endTile;
         startTile->prevTile = nullptr;
         endTile->nextTile = nullptr;
@@ -45,9 +53,7 @@ public:
         
         
     }
-    virtual ~board(){
-        
-    }
+    virtual ~board();
     void printBoard();
     void push_back(std::string);
     player start();
@@ -59,6 +65,7 @@ private:
 /** The "player" is actually an iterator for the board class. Represented on the board as @
  */
 class player{
+    friend class board;
 public:
     player(tile* inputPosition): position(inputPosition){}
     player& operator++();
@@ -72,14 +79,48 @@ private:
 ////////////////////////// FUNCTIONS //////////////////////////
 
 //// Board Functions ////
-/** Returns a player pointing to the starting tile */
+/** Destructor for the board class 
+ */
+board::~board(){
+    player deleter = start();
+    while(deleter.position != endTile){
+        tile* tempPos = deleter.position->nextTile;
+        delete deleter.position;
+        deleter.position = tempPos;
+    }
+    delete deleter.position; //Delete the final tile
+}
+
+/** Returns a player pointing to the starting tile 
+ */
 player board::start(){
     player returnPlayer(startTile);
     return returnPlayer;
 }
 
+/** Adds a new tile immediately in front of the endTile
+ */
+void board::push_back(std::string inputIcon){
+    tile* newTile = nullptr;
+    try{
+        newTile = new tile(inputIcon);
+    }
+    catch(std::exception &e){
+        delete newTile;
+        return;
+    }
+    
+    endTile->prevTile->nextTile = newTile;
+    newTile->prevTile = endTile->prevTile;
+    newTile->nextTile = endTile;
+    endTile->prevTile = newTile;
+    
+    return;
+}
+
 //// Player Functions ////
-/** Moves the player to the next tile */
+/** Moves the player to the next tile 
+ */
 player& player::operator++(){
     if(position->nextTile != nullptr){
         position = position->nextTile;
@@ -87,7 +128,8 @@ player& player::operator++(){
     return *this;
 }
 
-/** Moves the player to the previous tile */
+/** Moves the player to the previous tile 
+ */
 player& player::operator--(){
     if(position->prevTile != nullptr){
         position = position->prevTile;
@@ -95,7 +137,8 @@ player& player::operator--(){
     return *this;
 }
 
-/** Returns the icon of the tile the player is standing on */
+/** Returns the icon of the tile the player is standing on 
+ */
 std::string player::operator*(){
     return position->icon;
 }
