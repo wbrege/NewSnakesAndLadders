@@ -21,9 +21,9 @@ class tile{
     friend class board;
     friend class player;
 public:
-    tile(std::string inputIcon): icon(inputIcon){}
+    tile(char inputIcon): icon(inputIcon), nextTile(nullptr), prevTile(nullptr), connectTile(nullptr){}
 private:
-    std::string icon; //# for ladders, & for snakes, ' ' for normal
+    char icon; //# for ladders, & for snakes, ' ' for normal
     tile* nextTile;
     tile* prevTile;
     tile* connectTile; //For Snake tiles and Ladder tiles only
@@ -36,8 +36,9 @@ public:
     board(): startTile(nullptr), endTile(nullptr){
         //Create the start and end tiles
         try{
-        startTile = new tile(" ");
-        endTile = new tile(" ");
+            //Okay so I'm reinventing the wheel here and probably should just be using smart pointers, but this is a project of passion so I'm gonna go ahead and try and implement proper memory management all by myself anyway.
+            startTile = new tile(' ');
+            endTile = new tile(' ');
         }
         catch(std::exception &e){
             delete startTile;
@@ -48,15 +49,14 @@ public:
         startTile->prevTile = nullptr;
         endTile->nextTile = nullptr;
         endTile->prevTile = startTile;
-        
-        //For now the rest of the board will be assembled manually, in future I hope to add a function that will procedurally generate the board
-        
-        
     }
+    
     virtual ~board();
     void printBoard();
-    void push_back(std::string);
+    void push_back(char);
     player start();
+    player end();
+    void connectTiles();
 private:
     tile* startTile;
     tile* endTile;
@@ -70,7 +70,7 @@ public:
     player(tile* inputPosition): position(inputPosition){}
     player& operator++();
     player& operator--();
-    std::string operator*();
+    char operator*();
     
 private:
     tile* position;
@@ -98,9 +98,16 @@ player board::start(){
     return returnPlayer;
 }
 
-/** Adds a new tile immediately in front of the endTile
+/** Returns a player pointing to the ending tile
  */
-void board::push_back(std::string inputIcon){
+player board::end(){
+    player returnPlayer(endTile);
+    return returnPlayer;
+}
+
+/** Adds a new tile immediately in front of the endTile. Does not connect tiles.
+ */
+void board::push_back(char inputIcon){
     tile* newTile = nullptr;
     try{
         newTile = new tile(inputIcon);
@@ -116,6 +123,21 @@ void board::push_back(std::string inputIcon){
     endTile->prevTile = newTile;
     
     return;
+}
+
+/** Prints the board to the console
+ */
+void board::printBoard(){
+    player printer = end();
+    int i = 0;
+    
+    while(printer.position != startTile){
+        std::cout << "|" << *printer;
+        ++i;
+        if(i%10 == 0){
+            std::cout << std::endl;
+        }
+    }
 }
 
 //// Player Functions ////
@@ -139,7 +161,7 @@ player& player::operator--(){
 
 /** Returns the icon of the tile the player is standing on 
  */
-std::string player::operator*(){
+char player::operator*(){
     return position->icon;
 }
 
