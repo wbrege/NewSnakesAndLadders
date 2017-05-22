@@ -37,8 +37,8 @@ public:
         //Create the start and end tiles
         try{
             //Okay so I'm reinventing the wheel here and probably should just be using smart pointers, but this is a project of passion so I'm gonna go ahead and try and implement proper memory management all by myself anyway.
-            startTile = new tile(' ');
-            endTile = new tile(' ');
+            startTile = new tile('S');
+            endTile = new tile('E');
         }
         catch(std::exception &e){
             delete startTile;
@@ -135,9 +135,11 @@ void board::printBoard(){
         std::cout << "|" << *printer;
         ++i;
         if(i%10 == 0){
-            std::cout << std::endl;
+            std::cout << "|" << std::endl;
         }
+        --printer;
     }
+    std::cout << "|" << *printer << "|";
 }
 
 //// Player Functions ////

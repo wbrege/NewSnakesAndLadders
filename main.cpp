@@ -8,8 +8,49 @@
 #include <iostream>
 #include "snakesAndHeaders.h"
 
+void manualConstruct(board&);
 
 int main() {
+    board gameBoard;
+    manualConstruct(gameBoard);
+    gameBoard.printBoard();
     
     return 0;
+}
+
+/** Manual board construction, to be replaced by a procedural generation algorithm later
+ */
+void manualConstruct(board& manualBoard){
+    manualBoard.push_back('#');
+    for(int i = 0; i < 5; ++i){
+        manualBoard.push_back(' ');
+    }
+    manualBoard.push_back('$');
+    for(int i = 0; i < 12; ++i){
+        manualBoard.push_back(' ');
+    }
+    manualBoard.push_back('#');
+    for(int i = 0; i < 8; ++i){
+        manualBoard.push_back(' ');
+    }
+    manualBoard.push_back('$');
+    for(int i = 0; i < 15; ++i){
+        manualBoard.push_back(' ');
+    }
+    manualBoard.push_back('#');
+    for(int i = 0; i < 9; ++i){
+        manualBoard.push_back(' ');
+    }
+    manualBoard.push_back('$');
+    for(int i = 0; i < 13; ++i){
+        manualBoard.push_back(' ');
+    }
+    manualBoard.push_back('#');
+    for(int i = 0; i < 10; ++i){
+        manualBoard.push_back(' ');
+    }
+    manualBoard.push_back('$');
+    for(int i = 0; i < 18; ++i){
+        manualBoard.push_back(' ');
+    }
 }
