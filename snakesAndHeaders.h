@@ -70,7 +70,7 @@ public:
     player(tile* inputPosition): position(inputPosition){}
     player& operator++();
     player& operator--();
-    char operator*();
+    char& operator*();
     
 private:
     tile* position;
@@ -142,6 +142,60 @@ void board::printBoard(){
     std::cout << "|" << *printer << "|";
 }
 
+/** Connects all the snakes and ladders to their exit points "v" and "^" respectively.
+ */
+void board::connectTiles(){
+    //Connect ladders first
+    player connector = start();
+    while(connector.position != endTile){
+        //Check for ladder marker
+        if(*connector == '#'){
+            tile* origin = connector.position;
+            int distance = (rand()%40 + 10);
+            
+            for(int i = 0; i < distance; ++i){
+                ++connector;
+            }
+            //Check to make sure we are not replacing an already assigned tile
+            if(*connector != ' '){
+                while(*connector != ' '){
+                    --connector; //Find an unassigned tile
+                }
+            }
+            *connector = '^';
+            tile* destination = connector.position;
+            connector.position = origin;
+            connector.position->connectTile = destination;
+        }
+        ++connector; //Move to next tile
+    }
+    
+    //Connect ladders first
+    connector = end();
+    while(connector.position != startTile){
+        //Check for snake marker
+        if(*connector == '$'){
+            tile* origin = connector.position;
+            int distance = (rand()%40 + 10);
+            
+            for(int i = 0; i < distance; ++i){
+                --connector;
+            }
+            //Check to make sure we are not replacing an already assigned tile
+            if(*connector != ' '){
+                while(*connector != ' '){
+                    ++connector; //Find an unassigned tile
+                }
+            }
+            *connector = 'v';
+            tile* destination = connector.position;
+            connector.position = origin;
+            connector.position->connectTile = destination;
+        }
+        --connector; //Move to next tile
+    }
+}
+
 //// Player Functions ////
 /** Moves the player to the next tile 
  */
@@ -163,7 +217,7 @@ player& player::operator--(){
 
 /** Returns the icon of the tile the player is standing on 
  */
-char player::operator*(){
+char& player::operator*(){
     return position->icon;
 }
 

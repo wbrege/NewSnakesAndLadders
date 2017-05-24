@@ -7,12 +7,15 @@
 
 #include <iostream>
 #include "snakesAndHeaders.h"
+#include <time.h>
 
 void manualConstruct(board&);
 
 int main() {
+    srand(time(nullptr)); //Set a time based seed
     board gameBoard;
     manualConstruct(gameBoard);
+    gameBoard.connectTiles();
     gameBoard.printBoard();
     
     return 0;
@@ -25,7 +28,7 @@ void manualConstruct(board& manualBoard){
     for(int i = 0; i < 5; ++i){
         manualBoard.push_back(' ');
     }
-    manualBoard.push_back('$');
+    manualBoard.push_back('#');
     for(int i = 0; i < 12; ++i){
         manualBoard.push_back(' ');
     }
@@ -45,7 +48,7 @@ void manualConstruct(board& manualBoard){
     for(int i = 0; i < 13; ++i){
         manualBoard.push_back(' ');
     }
-    manualBoard.push_back('#');
+    manualBoard.push_back('$');
     for(int i = 0; i < 10; ++i){
         manualBoard.push_back(' ');
     }
