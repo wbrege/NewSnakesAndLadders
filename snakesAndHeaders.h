@@ -71,6 +71,7 @@ public:
     player& operator++();
     player& operator--();
     char& operator*();
+    void checkTile();
     
 private:
     tile* position;
@@ -219,6 +220,19 @@ player& player::operator--(){
  */
 char& player::operator*(){
     return position->icon;
+}
+
+/** Checks if the current tile is special and performs the appropriate action
+ */
+void player::checkTile(){
+    if(position->icon == '#'){
+        std::cout << "Great! You landed on a Ladder!" << std::endl;
+        position = position->connectTile;
+    }
+    if(position->icon == '$'){
+        std::cout << "Oh no! You landed on a Snake!" << std::endl;
+        position = position->connectTile;
+    }
 }
 
 #endif /* snakesAndHeaders_h */
