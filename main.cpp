@@ -10,13 +10,15 @@
 #include <time.h>
 
 void manualConstruct(board&);
+void proceduralGen(board&);
 int rollDice();
 
 int main() {
     srand(time(nullptr)); //Set a time based seed
     //Prepare the game board
     board gameBoard;
-    manualConstruct(gameBoard);
+    //manualConstruct(gameBoard);
+    proceduralGen(gameBoard);
     gameBoard.connectTiles();
     gameBoard.printBoard();
     
@@ -126,3 +128,33 @@ int rollDice(){
     int die2 = rand()%5 + 1;
     return (die1 + die2);
 }
+
+/** Procedurally generates a 100 tile board
+ */
+void proceduralGen(board& procBoard){
+    int tileCounter = 2;
+    while(tileCounter < 80){
+        int randNum = rand()%20 + 1;
+        for(int i = 0; i < randNum; ++i){
+            procBoard.push_back(' ');
+        }
+        
+        int randSpec = rand()%2;
+        if(randSpec == 0){
+            procBoard.push_back('$');
+        }
+        else{
+            procBoard.push_back('#');
+        }
+        
+        tileCounter += (randNum + 1);
+    }
+    
+    int remaining = 100 - tileCounter;
+    for(int i = 0; i < remaining; ++i){
+        procBoard.push_back(' ');
+    }
+    
+    return;
+}
+
