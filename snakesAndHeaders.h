@@ -32,6 +32,7 @@ private:
 /** The "board" is essentially just a manager for the tiles
  */
 class board{
+    friend class player;
 public:
     board(): startTile(nullptr), endTile(nullptr){
         //Create the start and end tiles
@@ -67,13 +68,16 @@ private:
 class player{
     friend class board;
 public:
-    player(tile* inputPosition): position(inputPosition){}
+    player(tile* inputPosition, board* inputBoard): position(inputPosition), theBoard(inputBoard){}
     player& operator++();
     player& operator--();
     char& operator*();
     void checkTile();
+    void chanceTile();
+    void triviaTile();
     
 private:
+    board* theBoard;
     tile* position;
 };
 
@@ -95,14 +99,14 @@ board::~board(){
 /** Returns a player pointing to the starting tile 
  */
 player board::start(){
-    player returnPlayer(startTile);
+    player returnPlayer(startTile, this);
     return returnPlayer;
 }
 
 /** Returns a player pointing to the ending tile
  */
 player board::end(){
-    player returnPlayer(endTile);
+    player returnPlayer(endTile, this);
     return returnPlayer;
 }
 
@@ -228,11 +232,284 @@ void player::checkTile(){
     if(position->icon == '#'){
         std::cout << "Great! You landed on a Ladder!" << std::endl;
         position = position->connectTile;
+        return;
     }
     if(position->icon == '$'){
         std::cout << "Oh no! You landed on a Snake!" << std::endl;
         position = position->connectTile;
+        return;
     }
+    if(position->icon == '?'){
+        std::cout << "Chance Tile!!!" << std::endl;
+        chanceTile();
+        return;
+    }
+    if(position->icon == 'T'){
+        std::cout << "Trivia Tile!!! Answer correctly and you move 5 steps forward! But if you answer wrong you will move 5 steps back!" << std::endl;
+        triviaTile();
+        return;
+    }
+}
+
+/** Something interesting happens ;)
+ */
+void player::chanceTile(){
+    int randNum = rand()% 99 + 1;
+    if(randNum <= 25){ //Move forward
+        std::cout << "Have a little boost ;)" << std::endl;
+        for(int i = 0, j = (randNum%5 + 1); i < j; ++i){
+            ++(*this);
+        }
+        return;
+    }
+    if(randNum > 25 && randNum <= 50){ //Move back
+        std::cout << "Uh oh! You slipped back!" << std::endl;
+        for(int i = 0, j = ((randNum-25)%5 + 1); i < j; ++i){
+            --(*this);
+        }
+        return;
+    }
+    if(randNum > 50 && randNum <= 60){ //Make a new ladder
+        std::cout << "Secret Ladder! :D" << std::endl;
+        position->icon = '#';
+        
+        //Connect the new ladder
+        player connector = *this;
+        tile* origin = connector.position;
+        int distance = (rand()%40 + 10);
+        
+        for(int i = 0; i < distance; ++i){
+            ++connector;
+        }
+        if(*connector != ' '){
+            while(*connector != ' '){
+                --connector;
+            }
+        }
+        *connector = '^';
+        tile* destination = connector.position;
+        connector.position = origin;
+        connector.position->connectTile = destination;
+        position = position->connectTile;
+        
+        return;
+    }
+    if(randNum > 60 && randNum <= 70){ //Make a new snake
+        std::cout << "Secret Snake! D:" << std::endl;
+        position->icon = '$';
+        
+        //Connect the new snake
+        player connector = *this;
+        tile* origin = connector.position;
+        int distance = (rand()%40 + 10);
+        
+        for(int i = 0; i < distance; ++i){
+            --connector;
+        }
+        if(*connector != ' '){
+            while(*connector != ' '){
+                ++connector;
+            }
+        }
+        *connector = 'v';
+        tile* destination = connector.position;
+        connector.position = origin;
+        connector.position->connectTile = destination;
+        position = position->connectTile;
+        
+        return;
+    }
+    if(randNum > 70 && randNum <= 80){ //Make a new trivia
+        std::cout << "Secret Trivia Tile!" << std::endl;
+        position->icon = 'T';
+        triviaTile();
+        
+        return;
+    }
+    if(randNum > 80 && randNum <= 99){ //Make a new trivia
+        std::cout << "Check out this dog!" << std::endl;
+        std::cout << "                  ▄              ▄" << std::endl;
+        std::cout << "                 ▌▒█           ▄▀▒▌" << std::endl;
+        std::cout << "                 ▌▒▒█        ▄▀▒▒▒▐" << std::endl;
+        std::cout << "                ▐▄▀▒▒▀▀▀▀▄▄▄▀▒▒▒▒▒▐" << std::endl;
+        std::cout << "              ▄▄▀▒░▒▒▒▒▒▒▒▒▒█▒▒▄█▒▐" << std::endl;
+        std::cout << "             ▄▀▒▒▒░░░▒▒▒░░░▒▒▒▀██▀▒▌" << std::endl;
+        std::cout << "            ▐▒▒▒▄▄▒▒▒▒░░░▒▒▒▒▒▒▒▀▄▒▒▌" << std::endl;
+        std::cout << "            ▌░░▌█▀▒▒▒▒▒▄▀█▄▒▒▒▒▒▒▒█▒▐" << std::endl;
+        std::cout << "           ▐░░░▒▒▒▒▒▒▒▒▌██▀▒▒░░░▒▒▒▀▄▌" << std::endl;
+        std::cout << "           ▌░▒▄██▄▒▒▒▒▒▒▒▒▒░░░░░░▒▒▒▒▌" << std::endl;
+        std::cout << "          ▌▒▀▐▄█▄█▌▄░▀▒▒░░░░░░░░░░▒▒▒▐" << std::endl;
+        std::cout << "          ▐▒▒▐▀▐▀▒░▄▄▒▄▒▒▒▒▒▒░▒░▒░▒▒▒▒▌" << std::endl;
+        std::cout << "          ▐▒▒▒▀▀▄▄▒▒▒▄▒▒▒▒▒▒▒▒░▒░▒░▒▒▐" << std::endl;
+        std::cout << "           ▌▒▒▒▒▒▒▀▀▀▒▒▒▒▒▒░▒░▒░▒░▒▒▒▌" << std::endl;
+        std::cout << "           ▐▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▒▄▒▒▐" << std::endl;
+        std::cout << "            ▀▄▒▒▒▒▒▒▒▒▒▒▒░▒░▒░▒▄▒▒▒▒▌" << std::endl;
+        std::cout << "              ▀▄▒▒▒▒▒▒▒▒▒▒▄▄▄▀▒▒▒▒▄▀" << std::endl;
+        std::cout << "                ▀▄▄▄▄▄▄▀▀▀▒▒▒▒▒▄▄▀" << std::endl;
+        std::cout << "                   ▒▒▒▒▒▒▒▒▒▒▀▀" << std::endl;
+        //Thanks to "hoserdude" for putting this dog ascii on github
+        
+        return;
+    }
+    if(randNum == 100){ //Move to end
+        std::cout << "Wow! Lucky!" << std::endl;
+        position = theBoard->endTile;
+        --(*this);
+        return;
+    }
+}
+
+/** Asks the player some true/false questions, if they get it right they move forward, if they dont they move back
+ */
+void player::triviaTile(){
+    int randNum = rand()%9 + 1;
+    char response;
+    bool correct = false;
+    if(randNum == 1){
+        std::cout << "As far as has ever been reported, no-one has ever seen an ostrich bury its head in the sand. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = true;
+        }
+        else if(response == 'F'){
+            correct = false;
+        }
+        else{
+            correct = false;
+        }
+    }
+    else if(randNum == 2){
+        std::cout << "Approximately one quarter of human bones are in the feet. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = true;
+        }
+        else if(response == 'F'){
+            correct = false;
+        }
+        else{
+            correct = false;
+        }
+    }
+    else if(randNum == 3){
+        std::cout << "Popeye’s nephews were called Peepeye, Poopeye, Pipeye and Pupeye. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = true;
+        }
+        else if(response == 'F'){
+            correct = false;
+        }
+        else{
+            correct = false;
+        }
+    }
+    else if(randNum == 4){
+        std::cout << "In ancient Rome, a special room called a vomitorium was available for diners to purge food in during meals. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = false;
+        }
+        else if(response == 'F'){
+            correct = true;
+        }
+        else{
+            correct = false;
+        }
+    }
+    else if(randNum == 5){
+        std::cout << "The average person will shed 10 pounds of skin during their lifetime. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = false;
+        }
+        else if(response == 'F'){
+            correct = true;
+        }
+        else{
+            correct = false;
+        }
+    }
+    else if(randNum == 6){
+        std::cout << "Sneezes regularly exceed 100 m.p.h. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = true;
+        }
+        else if(response == 'F'){
+            correct = false;
+        }
+        else{
+            correct = false;
+        }
+    }
+    else if(randNum == 7){
+        std::cout << "A slug’s blood is green. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = true;
+        }
+        else if(response == 'F'){
+            correct = false;
+        }
+        else{
+            correct = false;
+        }
+    }
+    else if(randNum == 8){
+        std::cout << "The Great Wall Of China is visible from the moon. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = false;
+        }
+        else if(response == 'F'){
+            correct = true;
+        }
+        else{
+            correct = false;
+        }
+    }
+    else if(randNum == 9){
+        std::cout << "Virtually all Las Vegas gambling casinos ensure that they have no clocks. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = true;
+        }
+        else if(response == 'F'){
+            correct = false;
+        }
+        else{
+            correct = false;
+        }
+    }
+    else if(randNum == 10){
+        std::cout << "The total surface area of two human lungs have a surface area of approximately 70 square metres. (T/F)" << std::endl;
+        std::cin >> response;
+        if(response == 'T'){
+            correct = true;
+        }
+        else if(response == 'F'){
+            correct = false;
+        }
+        else{
+            correct = false;
+        }
+    }
+    
+    if(correct == true){
+        std::cout << "CORRECT!" << std::endl;
+        for(int i = 0; i < 5; ++i){
+            ++(*this);
+        }
+    }
+    else{
+        std::cout << "INCORRECT!" << std::endl;
+        for(int i = 0; i < 5; ++i){
+            --(*this);
+        }
+    }
+    
+    checkTile();
 }
 
 #endif /* snakesAndHeaders_h */

@@ -51,6 +51,15 @@ int main() {
         ///////// AI TURN //////////
         std::cout << std::endl << "Player 2 turn!" << std::endl << std::endl;
         
+        //If playing with a human:
+        std::cout << "Roll the dice (y/n)? ";
+        std::cin >> response;
+        
+        if(response == 'n'){
+            std::cout << "Player 2 forfeits!" << std::endl;
+            return 0;
+        }
+        
         //Move the AI
         int AIRoll = rollDice();
         for(int i = 0; i < AIRoll; ++i){
@@ -63,9 +72,9 @@ int main() {
         
         ///////// PRINT THE BOARD //////////
         char tempPlayer = *humanPlayer;
-        *humanPlayer = '@';
+        *humanPlayer = '1';
         char tempAI = *AIPlayer;
-        *AIPlayer = '&';
+        *AIPlayer = '2';
         gameBoard.printBoard();
         *AIPlayer = tempAI;
         *humanPlayer = tempPlayer; //In this order it shouldn't matter if both players are on the same tile
@@ -133,18 +142,24 @@ int rollDice(){
  */
 void proceduralGen(board& procBoard){
     int tileCounter = 2;
-    while(tileCounter < 80){
-        int randNum = rand()%20 + 1;
+    while(tileCounter < 85){
+        int randNum = rand()%14 + 1;
         for(int i = 0; i < randNum; ++i){
             procBoard.push_back(' ');
         }
         
-        int randSpec = rand()%2;
+        int randSpec = rand()%4;
         if(randSpec == 0){
             procBoard.push_back('$');
         }
-        else{
+        else if(randSpec == 1){
             procBoard.push_back('#');
+        }
+        else if(randSpec == 2){
+            procBoard.push_back('?');
+        }
+        else if(randSpec == 3){
+            procBoard.push_back('T');
         }
         
         tileCounter += (randNum + 1);
