@@ -20,12 +20,24 @@ int main() {
     //manualConstruct(gameBoard);
     proceduralGen(gameBoard);
     gameBoard.connectTiles();
+    char response;
+    
+    std::cout << "How many people are playing (1/2)? " << std::endl;
+    std::cin >> response;
+    
     gameBoard.printBoard();
     
     //Prepare the players
-    char response;
-    player humanPlayer = gameBoard.start(); //Represented by '@' on the board
-    player AIPlayer = gameBoard.start(); //Represented by '&' on the board
+    bool AI = true;
+    player humanPlayer = gameBoard.start(); //Represented by '1' on the board
+    player AIPlayer = gameBoard.start(); //Represented by '2' on the board
+    
+    if(response == '2'){
+        AI = false;
+    }
+    else{
+        AIPlayer.setAI(true);
+    }
     
     //Begin the game!
     while(*humanPlayer != 'E' && *AIPlayer != 'E'){
@@ -52,12 +64,14 @@ int main() {
         std::cout << std::endl << "Player 2 turn!" << std::endl << std::endl;
         
         //If playing with a human:
-        std::cout << "Roll the dice (y/n)? ";
-        std::cin >> response;
+        if(AI == false){
+            std::cout << "Roll the dice (y/n)? ";
+            std::cin >> response;
         
-        if(response == 'n'){
-            std::cout << "Player 2 forfeits!" << std::endl;
-            return 0;
+            if(response == 'n'){
+                std::cout << "Player 2 forfeits!" << std::endl;
+                return 0;
+            }
         }
         
         //Move the AI

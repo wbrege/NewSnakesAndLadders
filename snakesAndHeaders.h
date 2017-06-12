@@ -69,16 +69,21 @@ class player{
     friend class board;
 public:
     player(tile* inputPosition, board* inputBoard): position(inputPosition), theBoard(inputBoard){}
+    player(tile* inputPosition, board* inputBoard, bool inputAI): position(inputPosition), theBoard(inputBoard), isAI(inputAI) {}
     player& operator++();
     player& operator--();
     char& operator*();
     void checkTile();
     void chanceTile();
     void triviaTile();
+    void setAI(bool inputAI){
+        isAI = inputAI;
+    }
     
 private:
     board* theBoard;
     tile* position;
+    bool isAI = false;
 };
 
 ////////////////////////// FUNCTIONS //////////////////////////
@@ -365,9 +370,16 @@ void player::triviaTile(){
     int randNum = rand()%9 + 1;
     char response;
     bool correct = false;
+    
     if(randNum == 1){
         std::cout << "As far as has ever been reported, no-one has ever seen an ostrich bury its head in the sand. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{ //AI always guesses true
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = true;
         }
@@ -380,7 +392,13 @@ void player::triviaTile(){
     }
     else if(randNum == 2){
         std::cout << "Approximately one quarter of human bones are in the feet. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = true;
         }
@@ -393,7 +411,13 @@ void player::triviaTile(){
     }
     else if(randNum == 3){
         std::cout << "Popeye’s nephews were called Peepeye, Poopeye, Pipeye and Pupeye. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = true;
         }
@@ -406,7 +430,13 @@ void player::triviaTile(){
     }
     else if(randNum == 4){
         std::cout << "In ancient Rome, a special room called a vomitorium was available for diners to purge food in during meals. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = false;
         }
@@ -419,7 +449,13 @@ void player::triviaTile(){
     }
     else if(randNum == 5){
         std::cout << "The average person will shed 10 pounds of skin during their lifetime. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = false;
         }
@@ -432,7 +468,13 @@ void player::triviaTile(){
     }
     else if(randNum == 6){
         std::cout << "Sneezes regularly exceed 100 m.p.h. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = true;
         }
@@ -445,7 +487,13 @@ void player::triviaTile(){
     }
     else if(randNum == 7){
         std::cout << "A slug’s blood is green. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = true;
         }
@@ -458,7 +506,13 @@ void player::triviaTile(){
     }
     else if(randNum == 8){
         std::cout << "The Great Wall Of China is visible from the moon. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = false;
         }
@@ -471,7 +525,13 @@ void player::triviaTile(){
     }
     else if(randNum == 9){
         std::cout << "Virtually all Las Vegas gambling casinos ensure that they have no clocks. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = true;
         }
@@ -484,7 +544,13 @@ void player::triviaTile(){
     }
     else if(randNum == 10){
         std::cout << "The total surface area of two human lungs have a surface area of approximately 70 square metres. (T/F)" << std::endl;
-        std::cin >> response;
+        if(isAI == false){
+            std::cin >> response;
+        }
+        else{
+            response = 'T';
+        }
+        
         if(response == 'T'){
             correct = true;
         }
