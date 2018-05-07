@@ -37,7 +37,7 @@ public:
     board(): startTile(nullptr), endTile(nullptr){
         //Create the start and end tiles
         try{
-            //Okay so I'm reinventing the wheel here and probably should just be using smart pointers, but this is a project of passion so I'm gonna go ahead and try and implement proper memory management all by myself anyway.
+            //Okay so I'm reinventing the wheel here and probably should just be using smart pointers, but this is a learning project so I'm gonna go ahead and try and implement proper memory management all by myself anyway.
             startTile = new tile('S');
             endTile = new tile('E');
         }
@@ -63,7 +63,7 @@ private:
     tile* endTile;
 };
 
-/** The "player" is actually an iterator for the board class. Represented on the board as @
+/** The "player" is actually an iterator for the board class. Represented on the board as 1 or 2
  */
 class player{
     friend class board;
@@ -234,25 +234,23 @@ char& player::operator*(){
 /** Checks if the current tile is special and performs the appropriate action
  */
 void player::checkTile(){
-    if(position->icon == '#'){
-        std::cout << "Great! You landed on a Ladder!" << std::endl;
-        position = position->connectTile;
-        return;
-    }
-    if(position->icon == '$'){
-        std::cout << "Oh no! You landed on a Snake!" << std::endl;
-        position = position->connectTile;
-        return;
-    }
-    if(position->icon == '?'){
-        std::cout << "Chance Tile!!!" << std::endl;
-        chanceTile();
-        return;
-    }
-    if(position->icon == 'T'){
-        std::cout << "Trivia Tile!!! Answer correctly and you move 5 steps forward! But if you answer wrong you will move 5 steps back!" << std::endl;
-        triviaTile();
-        return;
+    switch(position->icon) {
+        case '#':
+            std::cout << "Great! You landed on a Ladder!" << std::endl;
+            position = position->connectTile;
+            return;
+        case '$':
+            std::cout << "Oh no! You landed on a Snake!" << std::endl;
+            position = position->connectTile;
+            return;
+        case '?':
+            std::cout << "Chance Tile!!!" << std::endl;
+            chanceTile();
+            return;
+        case 'T':
+            std::cout << "Trivia Tile!!! Answer correctly and you move 5 steps forward! But if you answer wrong you will move 5 steps back!" << std::endl;
+            triviaTile();
+            return;
     }
 }
 
@@ -331,7 +329,7 @@ void player::chanceTile(){
         
         return;
     }
-    if(randNum > 80 && randNum <= 99){ //Make a new trivia
+    if(randNum > 80 && randNum <= 99){ //Draw a dog
         std::cout << "Check out this dog!" << std::endl;
         std::cout << "                  ▄              ▄" << std::endl;
         std::cout << "                 ▌▒█           ▄▀▒▌" << std::endl;
@@ -369,200 +367,59 @@ void player::chanceTile(){
 void player::triviaTile(){
     int randNum = rand()%9 + 1;
     char response;
-    bool correct = false;
+    char answer = 'X';
     
-    if(randNum == 1){
-        std::cout << "As far as has ever been reported, no-one has ever seen an ostrich bury its head in the sand. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{ //AI always guesses true
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = true;
-        }
-        else if(response == 'F'){
-            correct = false;
-        }
-        else{
-            correct = false;
-        }
-    }
-    else if(randNum == 2){
-        std::cout << "Approximately one quarter of human bones are in the feet. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = true;
-        }
-        else if(response == 'F'){
-            correct = false;
-        }
-        else{
-            correct = false;
-        }
-    }
-    else if(randNum == 3){
-        std::cout << "Popeye’s nephews were called Peepeye, Poopeye, Pipeye and Pupeye. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = true;
-        }
-        else if(response == 'F'){
-            correct = false;
-        }
-        else{
-            correct = false;
-        }
-    }
-    else if(randNum == 4){
-        std::cout << "In ancient Rome, a special room called a vomitorium was available for diners to purge food in during meals. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = false;
-        }
-        else if(response == 'F'){
-            correct = true;
-        }
-        else{
-            correct = false;
-        }
-    }
-    else if(randNum == 5){
-        std::cout << "The average person will shed 10 pounds of skin during their lifetime. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = false;
-        }
-        else if(response == 'F'){
-            correct = true;
-        }
-        else{
-            correct = false;
-        }
-    }
-    else if(randNum == 6){
-        std::cout << "Sneezes regularly exceed 100 m.p.h. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = true;
-        }
-        else if(response == 'F'){
-            correct = false;
-        }
-        else{
-            correct = false;
-        }
-    }
-    else if(randNum == 7){
-        std::cout << "A slug’s blood is green. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = true;
-        }
-        else if(response == 'F'){
-            correct = false;
-        }
-        else{
-            correct = false;
-        }
-    }
-    else if(randNum == 8){
-        std::cout << "The Great Wall Of China is visible from the moon. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = false;
-        }
-        else if(response == 'F'){
-            correct = true;
-        }
-        else{
-            correct = false;
-        }
-    }
-    else if(randNum == 9){
-        std::cout << "Virtually all Las Vegas gambling casinos ensure that they have no clocks. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = true;
-        }
-        else if(response == 'F'){
-            correct = false;
-        }
-        else{
-            correct = false;
-        }
-    }
-    else if(randNum == 10){
-        std::cout << "The total surface area of two human lungs have a surface area of approximately 70 square metres. (T/F)" << std::endl;
-        if(isAI == false){
-            std::cin >> response;
-        }
-        else{
-            response = 'T';
-        }
-        
-        if(response == 'T'){
-            correct = true;
-        }
-        else if(response == 'F'){
-            correct = false;
-        }
-        else{
-            correct = false;
-        }
+    switch(randNum) {
+        case 1:
+            std::cout << "As far as has ever been reported, no-one has ever seen an ostrich bury its head in the sand. (T/F)" << std::endl;
+            answer = 'T';
+            break;
+        case 2:
+            std::cout << "Approximately one quarter of human bones are in the feet. (T/F)" << std::endl;
+            answer = 'T';
+            break;
+        case 3:
+            std::cout << "Popeye’s nephews were called Peepeye, Poopeye, Pipeye and Pupeye. (T/F)" << std::endl;
+            answer = 'T';
+            break;
+        case 4:
+            std::cout << "In ancient Rome, a special room called a vomitorium was available for diners to purge food in during meals. (T/F)" << std::endl;
+            answer = 'F';
+            break;
+        case 5:
+            std::cout << "The average person will shed 10 pounds of skin during their lifetime. (T/F)" << std::endl;
+            answer = 'F';
+            break;
+        case 6:
+            std::cout << "Sneezes regularly exceed 100 m.p.h. (T/F)" << std::endl;
+            answer = 'T';
+            break;
+        case 7:
+            std::cout << "A slug’s blood is green. (T/F)" << std::endl;
+            answer = 'T';
+            break;
+        case 8:
+            std::cout << "The Great Wall Of China is visible from the moon. (T/F)" << std::endl;
+            answer = 'F';
+            break;
+        case 9:
+            std::cout << "Virtually all Las Vegas gambling casinos ensure that they have no clocks. (T/F)" << std::endl;
+            answer = 'T';
+            break;
+        case 10:
+            std::cout << "The total surface area of two human lungs have a surface area of approximately 70 square metres. (T/F)" << std::endl;
+            answer = 'T';
+            break;
     }
     
-    if(correct == true){
+    if(isAI == false){
+        std::cin >> response;
+    }
+    else{ //AI always guesses true
+        response = 'T';
+    }
+    
+    if(response == answer){
         std::cout << "CORRECT!" << std::endl;
         for(int i = 0; i < 5; ++i){
             ++(*this);
